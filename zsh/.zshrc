@@ -35,6 +35,43 @@ zl() {
   fi
 }
  
+gwt() {
+  if [ -z "$1" ]; then
+    echo "Usage: gwt <branch> [base] [name]"
+    return 1
+  fi
+
+  local branch="$1"
+  local base="${2:-nextjs}"
+  local name="${3:-$branch}"
+
+  local root="$HOME/dev/alta"
+  local target="$root/$name"
+  local remote_base="origin/$base"
+
+  # fetch base
+  git fetch origin "$base" >/dev/null 2>&1
+
+  # check for dir
+  mkdir -p "$root"
+
+  if [ -d "$target" ]; then
+    echo "Directory already exists: $target"
+    return 1
+  fi
+
+  # create or reuse branch
+  if git show-ref --verify --quiet "refs/heads/$branch"; then
+    git worktree add "$target" "$branch"
+  else
+    git worktree add -b "$branch" "$target" "$remote_base"
+  fi
+
+  echo "Worktree: $target"
+  echo "Branch:   $branch (from $remote_base)"
+
+  cd "$target" || return
+}
 
 
 # ALTA
