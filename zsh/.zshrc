@@ -20,7 +20,6 @@ alias catp='bat'  # cat with pager
 
 cd() {
     __zoxide_z "$@"
-   la 
 }
 
 # Zoxide integration with eza
